@@ -3,6 +3,9 @@ const gravatar = require('gravatar')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 
+const validateRegisterInput = require('../../validation/register')
+const validateLoginInput = require('../../validation/login')
+
 const router = express.Router()
 const User = require('../../models/user')
 
@@ -22,10 +25,17 @@ router.get('/test', (req,res) => {
 // @access  Public
 router.post('/register', async (req,res) => {
     
+    const { errors, isValid } = validateRegisterInput(req.body)
+
+    if (!isValid) {
+        return res.status(400).send(errors)
+    }
+
     try {
         const isuser = await User.findOne({email: req.body.email})
         if (isuser) {
-            return res.status(400).send('Account with email already exists!')
+            errors.email = 'Email already registered'
+            return res.status(400).send(errors)
         }
         
         const avatar = gravatar.url(req.body.email, {
@@ -51,6 +61,12 @@ router.post('/register', async (req,res) => {
 // @desc    Login User / Return JWT
 // @access  Public
 router.post('/login', async (req,res) => {
+
+    const { errors, isValid } = validateLoginInput(req.body)
+    if (!isValid) {
+        return res.status(400).send(errors)
+    }
+
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const payload = {id: user.id, name: user.name, avatar: user.avatar}
@@ -58,8 +74,8 @@ router.post('/login', async (req,res) => {
 
         res.send({ user, token: 'Bearer '+ token })        
     } catch (e) {
-        // console.log(typeof(e), e.Error)
-        res.status(400).send('Login Failed')
+        // console.log(typeof(e), e.message)  when Error is thrown
+        res.status(400).send(e)
     }
 })
 

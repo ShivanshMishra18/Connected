@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
@@ -35,17 +36,20 @@ userSchema.methods.toJSON = function () {
     return userObject
 }
 
+
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({email});
 
     if (!user) {
-        throw new Error('User not found')
+        // throw new Error('User not found')
+        throw { email: 'Email not registered' }
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
     
     if (!isMatch) {
-        throw new Error('Password does not match')
+        // throw new Error('Password does not match')
+        throw { password: 'Password incorrect' }
     }
 
     return user
