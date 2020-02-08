@@ -1,5 +1,7 @@
 const express = require('express')
 const gravatar = require('gravatar')
+const jwt = require('jsonwebtoken')
+const passport = require('passport')
 
 const router = express.Router()
 const User = require('../../models/user')
@@ -15,7 +17,7 @@ router.get('/test', (req,res) => {
 })
 
 
-// @router  GET api/user/register
+// @router  POST api/user/register
 // @desc    Register User
 // @access  Public
 router.post('/register', async (req,res) => {
@@ -31,9 +33,6 @@ router.post('/register', async (req,res) => {
             r: 'pg',    //Rating
             d: 'mm'     //Default
         })
-
-        console.log(req.body)
-    
         const user = new User({
             ...req.body,
             avatar
@@ -45,7 +44,31 @@ router.post('/register', async (req,res) => {
     catch (e) {
         res.status(500).send(e)
     }
-    
+})
+
+
+// @router  POST api/user/login
+// @desc    Login User / Return JWT
+// @access  Public
+router.post('/login', async (req,res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        const payload = {id: user.id, name: user.name, avatar: user.avatar}
+        const token = jwt.sign(payload, 'secretkey')
+
+        res.send({ user, token: 'Bearer '+ token })        
+    } catch (e) {
+        // console.log(typeof(e), e.Error)
+        res.status(400).send('Login Failed')
+    }
+})
+
+
+// @router  GET api/user/current
+// @desc    Return Current User
+// @access  Private
+router.get('/current', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    res.send(req.user)
 })
 
 module.exports = router

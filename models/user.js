@@ -25,6 +25,33 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.avatar
+
+    return userObject
+}
+
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({email});
+
+    if (!user) {
+        throw new Error('User not found')
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    
+    if (!isMatch) {
+        throw new Error('Password does not match')
+    }
+
+    return user
+}
+
+
 userSchema.pre('save', async function(next) {
     const user = this
     
@@ -34,6 +61,7 @@ userSchema.pre('save', async function(next) {
     next()
 })
 
+// name of model - User - can be accessed as mongoose.model('User')
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
