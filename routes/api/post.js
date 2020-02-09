@@ -144,6 +144,36 @@ router.post('/unlike/:id', passport.authenticate('jwt', {session:false}), async 
 })
 
 
+// @router  POST api/posts/comment/:id
+// @desc    Add comment to a post
+// @access  Private
+router.post('/comment/:id', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    const { errors, isValid } = validatePostInput(req.body)
+    if (!isValid) {
+        return res.status(400).send(errors)
+    }
+
+    try {
+        const post = await Post.findById(req.params.id)
+        // Safe to assume that the post exists
+
+        const newcomment = {
+            user: req.user.id,
+            text: req.body.text,
+            name: req.body.name,
+            avatar: req.body.avatar
+        }
+
+        post.comments.push(newcomment)
+        await post.save()
+        res.send(post)
+
+    } catch (e) {
+        const errors = { server: 'Internal sever error' }
+        res.status(500).send(errors)
+    }
+})
+
 // @router  DELETE api/posts/:id
 // @desc    Delete post
 // @access  Private
@@ -171,5 +201,36 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), async (req,
     }
 
 })
+
+
+// @router  DELETE api/posts/comment/:id/:comment_id
+// @desc    Delete comment
+// @access  Private
+router.delete('/comment/:id/:comment_id', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    errors = {}
+
+    try {
+        const post = await Post.findById(req.params.id)
+        // Safe to assume that post exists
+
+        if (post.comments.every( comment => comment._id.toString() !== req.params.comment_id )) {
+            errors.commentnotexists = 'Comment does not exist'
+            return res.status(404).send(errors)
+        }
+
+        const idx = post.comments.map( comment => comment._id.toString()).indexOf(req.params.comment_id)
+        post.comments.splice(idx, 1)
+
+        await post.save()
+        res.send(post)
+
+    } catch (e) {
+        const errors = { server: 'Internal sever error' }
+        console.log(e)
+        res.status(500).send(errors)
+    }
+})
+
+
 
 module.exports = router
