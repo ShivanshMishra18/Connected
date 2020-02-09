@@ -6,6 +6,8 @@ const User = require('../../models/user')
 const Profile = require('../../models/profile')
 
 const validateProfileInput = require('../../validation/profile')
+const validateExperienceInput = require('../../validation/experience')
+const validateEducationInput = require('../../validation/education')
 
 const router = express.Router()
 
@@ -99,7 +101,7 @@ router.get('/all', async (req,res) => {
         for (let i=0; i<profiles.length; i++)
             await profiles[i].populate('user', ['name', 'avatar']).execPopulate()
         res.send(profiles)
-        
+
     } catch (e) {
         res.status(500).send(e.message)
     }
@@ -167,6 +169,121 @@ router.post('', passport.authenticate('jwt', {session:false}), async (req,res) =
 })
 
 
+// @router  POST api/profile/experience
+// @desc    Add experience to user profile
+// @access  Private
+router.post('/experience', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    
+    const { errors, isValid } = validateExperienceInput(req.body)
+    if (!isValid) {
+        return res.status(400).send(errors)
+    }
+
+    try {
+        const profile = await Profile.findOne({ user: req.user.id })
+        
+        if (!profile) {
+            errors.noprofile = 'Create profile before adding experience'
+            return res.status(400).send(errors)
+        }
+        
+        const exp = { ...req.body }
+        profile.experience.unshift(exp);
+        console.log(profile.experience)
+        
+        await profile.save()
+        res.send(profile)
+
+    } catch (e) {
+        errors.server = 'Internal server error'
+        res.status(500).send(errors)
+    }
+})
+
+
+// @router  POST api/profile/education
+// @desc    Add education to user profile
+// @access  Private
+router.post('/education', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    
+    const { errors, isValid } = validateEducationInput(req.body)
+    if (!isValid) {
+        return res.status(400).send(errors)
+    }
+
+    try {
+        const profile = await Profile.findOne({ user: req.user.id })
+        
+        if (!profile) {
+            errors.noprofile = 'Create profile before adding education'
+            return res.status(400).send(errors)
+        }
+        
+        const edu = { ...req.body }
+        profile.education.unshift(edu);
+        console.log(profile.education)
+        
+        await profile.save()
+        res.send(profile)
+
+    } catch (e) {
+        errors.server = 'Internal server error'
+        res.status(500).send(errors)
+    }
+})
+
+
+// @router  DELETE api/profile/experience/:exp_id
+// @desc    Delete experience by id --- valid id sent via interface
+// @access  Private
+router.delete('/experience/:exp_id', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.user.id })
+
+        const idx = profile.experience.map( exp => exp.id ).indexOf(req.params.exp_id)
+        profile.experience.splice(idx,1)
+
+        await profile.save()
+        res.send(profile)
+    } catch (e) {
+        const errors = { server: 'Internal server error' }
+        res.status(500).send(errors)
+    }
+})
+
+
+// @router  DELETE api/profile/education/:ed_id
+// @desc    Delete education by id --- valid id sent via interface
+// @access  Private
+router.delete('/education/:ed_id', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.user.id })
+
+        const idx = profile.education.map( ed => ed.id ).indexOf(req.params.ed_id)
+        profile.education.splice(idx,1)
+
+        await profile.save()
+        res.send(profile)
+    } catch (e) {
+        const errors = { server: 'Internal server error' }
+        res.status(500).send(errors)
+    }
+})
+
+
+// @router  DELETE api/profile
+// @desc    Delete profile and user
+// @access  Private
+router.delete('', passport.authenticate('jwt', {session:false}), async (req,res) => {
+    try {
+        await Profile.findOneAndRemove({ user: req.user.id })
+        await User.findOneAndRemove({ _id: req.user.id })
+        res.send({ success: true })
+    } catch (e) {
+        const errors = { server: 'Internal server error' }
+        res.status(500).send(errors)
+    }
+})
 
 
 module.exports = router
