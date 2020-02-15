@@ -7,7 +7,7 @@ const userRouter = require('./routes/api/user')
 const profileRouter = require('./routes/api/profile')
 const postRouter = require('./routes/api/post')
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 const app = express()
 
 // To access req.body
