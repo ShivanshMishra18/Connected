@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import classnames from 'classnames'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { registerUser } from '../../actions/authActions'
+import { withRouter } from 'react-router-dom'   
 
 export class Register extends Component {
 
@@ -19,11 +22,17 @@ export class Register extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+            this.setState({ errors: nextProps.errors })
+        }
+    }
+
     onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    async onSubmit(e) {
+    onSubmit(e) {
         e.preventDefault()
 
         const newUser = {
@@ -33,21 +42,18 @@ export class Register extends Component {
             email: this.state.email
         }
 
-        try {
-            const res = await axios.post('/api/user/register', newUser)
-            console.log(res.data)
-        } catch (err) {
-            // console.log(err.response.data)
-            this.setState({ errors: err.response.data })
-        }
+        this.props.registerUser(newUser, this.props.history)    // enabling this.props.history.push in authActions
+
     }
 
     render() {
 
         // const {errors} = this.state // used to access errors without this.state
-
+        // const { user } = this.props.auth // to est mapStateToProps
+        
         return (   
-        <div className="register">
+        <div className="register"> 
+            {/* {user ? user.name : null} */}
             <div className="container">
             <div className="row">
                 <div className="col-md-8 m-auto">
@@ -133,4 +139,15 @@ export class Register extends Component {
     }
 }
 
-export default Register
+Register.propTypes = {      // Adding additional properties to Register
+    registerUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+    errors: state.errors
+})  // to enable use of auth state with this.props.auth
+
+export default connect(mapStateToProps, { registerUser })(withRouter(Register))
