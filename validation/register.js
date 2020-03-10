@@ -10,7 +10,7 @@ module.exports = function validateRegisterInput(data) {
     data.password2 = !isEmpty(data.password2) ? data.password2 : ''
 
     if (!validator.isLength(data.name, { min: 3, max: 30 })) {
-        errors.name = 'Name must be between 5 and 30 characters'
+        errors.name = 'Name must be between 3 and 30 characters'
     }
     
     if (!validator.isLength(data.password, { min: 6, max: 30 })) {
@@ -38,7 +38,7 @@ module.exports = function validateRegisterInput(data) {
     }
 
     if (!validator.equals(data.password, data.password2)) {
-        errors.password = 'Passwords should match'
+        errors.password2 = 'Passwords should match'
     }
 
     return {
