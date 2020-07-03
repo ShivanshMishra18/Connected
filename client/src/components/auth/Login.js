@@ -16,7 +16,7 @@ export class Login extends Component {
         }
 
         this.onSubmit = this.onSubmit.bind(this);
-        this.onClick = this.onClick.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -30,7 +30,7 @@ export class Login extends Component {
       }
     }
 
-    onClick(e) {
+    onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
@@ -64,7 +64,7 @@ export class Login extends Component {
                         })} 
                         placeholder="Email Address" 
                         name="email" 
-                        onClick={this.onClick}    
+                        onChange={this.onChange}    
                     />
                     {errors.email && (
                         <div className="invalid-feedback">
@@ -80,7 +80,7 @@ export class Login extends Component {
                         })} 
                         placeholder="Password" 
                         name="password" 
-                        onClick={this.onClick}
+                        onChange={this.onChange}
                     />
                     {errors.password && (
                         <div className="invalid-feedback">
