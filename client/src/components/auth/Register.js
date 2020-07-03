@@ -22,6 +22,7 @@ export class Register extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    // Using errors / props as state 
     componentWillReceiveProps(nextProps) {
         if (nextProps.errors) {
             this.setState({ errors: nextProps.errors })
@@ -150,4 +151,5 @@ const mapStateToProps = (state) => ({
     errors: state.errors
 })  // to enable use of auth state with this.props.auth
 
+// withRouter allows us to enable redirection from inside the action
 export default connect(mapStateToProps, { registerUser })(withRouter(Register))
