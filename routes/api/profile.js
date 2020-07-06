@@ -131,7 +131,7 @@ router.post('', passport.authenticate('jwt', {session:false}), async (req,res) =
         profileFields.skills = req.body.skills.split(',')
     }
     
-    const socialFields = ['linkedin', 'facebook', 'instagram']
+    const socialFields = ['linkedin', 'facebook', 'instagram', 'twitter', 'youtube']
     socialFields.forEach( field => {
         if (req.body[field]) profileFields.social[field] = req.body[field]
     })

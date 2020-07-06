@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE } from './types'
+import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE, GET_ERRORS } from './types'
 
 // Get current profile
 export const getCurrentProfile = () => async dispatch => {
@@ -36,3 +36,18 @@ export const clearCurrentProfile = () => {
     }
 }
 
+
+// Create profile
+export const createProfile = (profileData, history) => async dispatch => {
+
+    try {
+        await axios.post('/api/profile', profileData)
+        history.push('/dashboard')
+    } 
+    catch (e) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: e.response.data
+        })
+    }
+}
