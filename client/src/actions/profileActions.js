@@ -88,3 +88,18 @@ export const addExperience = (expData, history) => async dispatch => {
         })
     }
 }
+
+// Add education 
+export const addEducation = (eduData, history) => async dispatch => {
+
+    try {
+        await axios.post('api/profile/education', eduData)
+        history.push('/dashboard')
+    }
+    catch (e) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: e.response.data
+        })
+    }
+}

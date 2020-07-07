@@ -4,16 +4,16 @@ import { withRouter, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import TextFieldGroup from '../common/TextFieldGroup'
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
-import { addExperience } from '../../actions/profileActions'
+import { addEducation } from '../../actions/profileActions'
 
-class AddExperience extends Component {
+class AddEducation extends Component {
   
   constructor(props) {
     super(props)
     this.state = {
-      company: '',
-      title: '',
-      location: '',
+      school: '',
+      degree: '',
+      fieldofstudy: '',
       from: '',
       to: '',
       disabled: false,
@@ -36,16 +36,16 @@ class AddExperience extends Component {
     e.preventDefault()
 
     const formData = {
-      company: this.state.company,
-      location: this.state.location,
+      school: this.state.school,
+      degree: this.state.degree,
       to: this.state.to,
       from: this.state.from,
-      title: this.state.title,
+      fieldofstudy: this.state.fieldofstudy,
       current: this.state.current,
       description: this.state.description
     }
     
-    this.props.addExperience(formData, this.props.history)
+    this.props.addEducation(formData, this.props.history)
   }
 
   onChange(e) {
@@ -56,7 +56,7 @@ class AddExperience extends Component {
     const { errors } = this.state
 
     return (
-      <div className="add-experience">
+      <div className="add-education">
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
@@ -64,35 +64,35 @@ class AddExperience extends Component {
                 Go Back
               </Link>
               <h1 className="display-4 text-center">
-                Add Experience
+                Add Education
               </h1>
               <p className="lead text-center">
-                Add your previous jobs / positions
+                Add your education details
               </p>
               <small className="d-block pb-3">
                 * = required fields
               </small>
               <form onSubmit={this.onSubmit}>
                 <TextFieldGroup
-                  placeholder="* Company"
-                  name="company"
-                  value={this.state.company}
+                  placeholder="* School / University"
+                  name="school"
+                  value={this.state.school}
                   onChange={this.onChange}
-                  error={errors.company}
+                  error={errors.school}
                 />
                 <TextFieldGroup
-                  placeholder="* Job Title"
-                  name="title"
-                  value={this.state.title}
+                  placeholder="* Degree"
+                  name="degree"
+                  value={this.state.degree}
                   onChange={this.onChange}
-                  error={errors.title}
+                  error={errors.degree}
                 />
                 <TextFieldGroup
-                  placeholder="Location"
-                  name="location"
-                  value={this.state.location}
+                  placeholder="* Field of Study"
+                  name="fieldofstudy"
+                  value={this.state.fieldofstudy}
                   onChange={this.onChange}
-                  error={errors.location}
+                  error={errors.fieldofstudy}
                 />
                 <h6>From Date</h6>
                 <TextFieldGroup
@@ -130,12 +130,12 @@ class AddExperience extends Component {
                   </label>
                 </div>
                 <TextAreaFieldGroup
-                  placeholder="Job Description"
+                  placeholder="Program Description"
                   name="description"
                   value={this.state.description}
                   onChange={this.onChange}
                   error={errors.description}
-                  info="Tell us about your position"
+                  info="Tell us about this program"
                 />
                 <input type="submit" value="Submit" className="btn btn-info btn-block mt-4" />
               </form>
@@ -147,10 +147,10 @@ class AddExperience extends Component {
   }
 }
 
-AddExperience.propTypes = {
+AddEducation.propTypes = {
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
-  addExperience:  PropTypes.func.isRequired
+  addEducation:  PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -159,4 +159,4 @@ const mapStateToProps = state => ({
 })
 
 
-export default connect(mapStateToProps, { addExperience })(withRouter(AddExperience))
+export default connect(mapStateToProps, { addEducation })(withRouter(AddEducation))
