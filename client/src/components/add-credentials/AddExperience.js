@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import TextFieldGroup from '../common/TextFieldGroup'
-// import 
+import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
+import { addExperience } from '../../actions/profileActions'
 
 class AddExperience extends Component {
   
@@ -25,10 +26,26 @@ class AddExperience extends Component {
     this.onChange = this.onChange.bind(this)
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors })
+    }
+  }
+
   onSubmit(e) {
     e.preventDefault()
+
+    const formData = {
+      company: this.state.company,
+      location: this.state.location,
+      to: this.state.to,
+      from: this.state.from,
+      title: this.state.title,
+      current: this.state.current,
+      description: this.state.description
+    }
     
-    // submit action
+    this.props.addExperience(formData, this.props.history)
   }
 
   onChange(e) {
@@ -36,7 +53,6 @@ class AddExperience extends Component {
   }
   
   render() {
-
     const { errors } = this.state
 
     return (
@@ -113,7 +129,7 @@ class AddExperience extends Component {
                     Current Job
                   </label>
                 </div>
-                <TextFieldGroup
+                <TextAreaFieldGroup
                   name="description"
                   value={this.state.description}
                   onChange={this.onChange}
@@ -132,7 +148,8 @@ class AddExperience extends Component {
 
 AddExperience.propTypes = {
   profile: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  addExperience:  PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -141,4 +158,4 @@ const mapStateToProps = state => ({
 })
 
 
-export default connect(mapStateToProps)(withRouter(AddExperience))
+export default connect(mapStateToProps, { addExperience })(withRouter(AddExperience))

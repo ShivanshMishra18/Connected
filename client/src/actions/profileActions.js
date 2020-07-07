@@ -72,3 +72,19 @@ export const createProfile = (profileData, history) => async dispatch => {
         })
     }
 }
+
+
+// Add experience 
+export const addExperience = (expData, history) => async dispatch => {
+
+    try {
+        await axios.post('api/profile/experience', expData)
+        history.push('/dashboard')
+    }
+    catch (e) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: e.response.data
+        })
+    }
+}
