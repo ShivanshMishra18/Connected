@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { getCurrentProfile } from '../../actions/profileActions'
+import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
 import ProfileButtons from './ProfileButtons'
  
@@ -16,6 +16,10 @@ class Dashboard extends Component {
       // However, we will use Private Router to do this
 
       this.props.getCurrentProfile()
+    }
+
+    onDeleteProfile(e) {
+      this.props.deleteAccount()
     }
     
     render() {
@@ -33,10 +37,14 @@ class Dashboard extends Component {
         if (Object.keys(profile).length) {
           dashboardContent = (
             <div>
-                <p className="lead text-muted"> Welcome 
-                  <Link to={`/profile/${profile.handle}`}> {user.name} </Link>
-                </p>
-                <ProfileButtons />
+              <p className="lead text-muted"> Welcome 
+                <Link to={`/profile/${profile.handle}`}> {user.name} </Link>
+              </p>
+              <ProfileButtons />
+              <div style={{marginBottom: '60px'}} />
+              <button onClick={this.onDeleteProfile.bind(this)} className="btn btn-danger">
+                Delete My Account
+              </button>
             </div>
           )
         }
@@ -45,11 +53,11 @@ class Dashboard extends Component {
         {
           dashboardContent = (
             <div>
-                <p className="lead text-muted">Welcome {user.name}</p>
-                <p> Your profile is empty, please add some info </p>
-                <Link to="/create-profile" className="btn btn-lg btn-info">
-                    Create Profile
-                </Link>
+              <p className="lead text-muted">Welcome {user.name}</p>
+              <p> Your profile is empty, please add some info </p>
+              <Link to="/create-profile" className="btn btn-lg btn-info">
+                Create Profile
+              </Link>
             </div>
           )
         }
@@ -78,7 +86,8 @@ const mapStateToProps = state => ({
 Dashboard.propTypes = {
     getCurrentProfile: PropTypes.func.isRequired,
     profile: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    deleteAccount: PropTypes.func.isRequired
 }
 
-export default connect(mapStateToProps, { getCurrentProfile })(Dashboard)
+export default connect(mapStateToProps, { getCurrentProfile, deleteAccount })(Dashboard)

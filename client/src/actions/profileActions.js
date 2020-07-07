@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE, GET_ERRORS } from './types'
+import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE, GET_ERRORS, SET_CURRENT_USER } from './types'
 
 // Get current profile
 export const getCurrentProfile = () => async dispatch => {
@@ -33,6 +33,27 @@ export const setProfileLoading = () => {
 export const clearCurrentProfile = () => {
     return {
         type: CLEAR_CURRENT_PROFILE
+    }
+}
+
+
+// Delete account and profile
+export const deleteAccount = () => async dispatch => {
+    if (!window.confirm('Are you sure you want to delete your account?'))
+        return
+    
+    try {
+        await axios.delete('/api/profile')
+        dispatch({
+            type: SET_CURRENT_USER,
+            payload: {}
+        })
+    }
+    catch (e) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: e.response.data
+        })
     }
 }
 
