@@ -5,8 +5,9 @@ import TextFieldGroup from '../common/TextFieldGroup'
 import SelectListGroup from '../common/SelectListGroup'
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup'
 import InputGroup from '../common/InputGroup'
-import { createProfile } from '../../actions/profileActions'
+import { createProfile, getCurrentProfile } from '../../actions/profileActions'
 import { withRouter } from 'react-router-dom'
+import isEmpty from '../../validation/is-empty'
 
 
 class CreateProfile extends Component {
@@ -33,9 +34,53 @@ class CreateProfile extends Component {
         this.onChange = this.onChange.bind(this)
     }
 
+    componentDidMount() {
+      this.props.getCurrentProfile();
+    }
+
     componentWillReceiveProps(nextProps) {
       if(nextProps.errors) {
         this.setState({errors: nextProps.errors})
+      }
+
+      if(nextProps.profile) {
+        const { profile } = nextProps.profile
+
+        // We want skills to be comma separated
+        const skillsCSV = profile.skills.join(',')
+
+        // If fields do not exist
+        const fieldsEmpty = [ 'company', 'website', 'githubusername', 'bio', 'location' ]
+        fieldsEmpty.forEach( field => {
+          if (isEmpty(profile[field]))
+            profile[field] = ''
+        })
+
+        if (isEmpty(profile.social))
+          profile.social = {}
+        const socialFields = [ 'twitter', 'facebook', 'instagram', 'youtube', 'linkedin' ]
+        socialFields.forEach( field => {
+          if (isEmpty(profile.social[field]))
+            profile[field] = ''
+        })
+
+        // Initialize component state with these saved values
+        this.setState({
+          handle: profile.handle,
+          company: profile.company,
+          website: profile.website,
+          location: profile.location,
+          githubusername: profile.githubusername,
+          bio: profile.bio,
+          status: profile.status,
+          skills: skillsCSV,
+          twitter: profile.twitter,
+          facebook: profile.facebook,
+          instagram: profile.instagram,
+          youtube: profile.youtube,
+          linkedin: profile.linkedin
+        })
+
       }
     }
 
@@ -137,8 +182,7 @@ class CreateProfile extends Component {
           <div className="container">
             <div className="row">
               <div className="col-md-8 m-auto">
-                <h1 className="display-4 text-center">Create Your Profile</h1>
-                <p className="lead text-center">Let's get some information to make your profile stand out</p>
+                <h1 className="display-4 text-center">Edit Profile</h1>
                 <small className="d-block pb-3">* = required fields</small>    
                 <form onSubmit={this.onSubmit}>
                   <TextFieldGroup
@@ -239,7 +283,8 @@ class CreateProfile extends Component {
 CreateProfile.propTypes = {
     profile: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
-    createProfile: PropTypes.func.isRequired
+    createProfile: PropTypes.func.isRequired,
+    getCurrentProfile: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -247,4 +292,4 @@ const mapStateToProps = state => ({
     errors: state.errors
 })
 
-export default connect(mapStateToProps, { createProfile })(withRouter(CreateProfile))
+export default connect(mapStateToProps, { createProfile, getCurrentProfile })(withRouter(CreateProfile))

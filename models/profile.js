@@ -99,6 +99,12 @@ const profileSchema = new mongoose.Schema({
         facebook: {
             type: String
         },
+        youtube: {
+            type: String
+        },
+        twitter: {
+            type: String
+        },
         instagram: {
             type: String
         }
