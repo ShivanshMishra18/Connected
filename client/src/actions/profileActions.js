@@ -122,3 +122,22 @@ export const deleteExperience = expId => async dispatch => {
         })
     }
 }
+
+
+// Delete education 
+export const deleteEducation = eduId => async dispatch => {
+
+    try {
+        const res = await axios.delete(`api/profile/education/${eduId}`)
+        dispatch({
+            type: GET_PROFILE,
+            payload: res.data
+        })
+    }
+    catch (e) {
+        dispatch({
+            type: GET_ERRORS,
+            payload: e.response.data
+        })
+    }
+}
