@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE, GET_ERRORS, SET_CURRENT_USER } from './types'
+import { PROFILE_LOADING, GET_PROFILE, CLEAR_CURRENT_PROFILE, GET_ERRORS, SET_CURRENT_USER, GET_PROFILES } from './types'
 
 // Get current profile
 export const getCurrentProfile = () => async dispatch => {
@@ -141,3 +141,23 @@ export const deleteEducation = eduId => async dispatch => {
         })
     }
 }
+
+
+// Get all profiles
+export const getProfiles = () => async dispatch => {
+    dispatch(setProfileLoading())
+
+    try {
+        const res = await axios.get('/api/profile/all')
+        dispatch({ 
+            type: GET_PROFILES,
+            payload: res.data
+        })
+    } 
+    catch (e) {
+        dispatch({ 
+            type: GET_PROFILES,
+            payload: null
+        })
+    }
+} 
