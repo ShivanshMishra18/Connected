@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import isEmpty from '../../validation/is-empty'
 import Moment from 'react-moment'
+import PropTypes from 'prop-types'
 
 class ProfileCredentials extends Component {
   render() {
     const { education, experience } = this.props
 
     const experienceList = experience.map(exp => (
-      <li className="list-group-item" id={exp._id}>
+      <li className="list-group-item" id={exp._id} key={exp._id}>
         <h4>{exp.company}</h4>
         <p>
           <Moment format="DD/MM/YYYY">{exp.from}</Moment> - {' '}
@@ -43,7 +44,7 @@ class ProfileCredentials extends Component {
     ))
 
     const educationList = education.map(edu => (
-      <li className="list-group-item" id={edu._id}>
+      <li className="list-group-item" id={edu._id} key={edu._id}>
         <h4>{edu.school}</h4>
         <p>
           <Moment format="DD/MM/YYYY">{edu.from}</Moment> - {' '}
@@ -73,24 +74,24 @@ class ProfileCredentials extends Component {
     ))
 
     return (
-      <div class="row">
-        <div class="col-md-6">
-          <h3 class="text-center text-info">Experience</h3>
+      <div className="row">
+        <div className="col-md-6">
+          <h3 className="text-center text-info">Experience</h3>
             {
               experienceList.length === 0 ? 
               ("No Experience Listed") : (
-                <ul class="list-group">
+                <ul className="list-group">
                 { experienceList } 
                 </ul>
               )
             }
         </div>
-        <div class="col-md-6">
-          <h3 class="text-center text-info">Education</h3>
+        <div className="col-md-6">
+          <h3 className="text-center text-info">Education</h3>
           {
             educationList.length === 0 ? 
             ("No Education Listed") : (
-              <ul class="list-group">
+              <ul className="list-group">
               { educationList } 
               </ul>
             )
@@ -99,6 +100,11 @@ class ProfileCredentials extends Component {
       </div>
     )
   }
+}
+
+ProfileCredentials.propTypes = {
+  education: PropTypes.array.isRequired,
+  experience: PropTypes.array.isRequired
 }
 
 export default ProfileCredentials

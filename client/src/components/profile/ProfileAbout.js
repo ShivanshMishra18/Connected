@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import isEmpty from '../../validation/is-empty'
+import PropTypes from 'prop-types'
 
 class ProfileAbout extends Component {
   render() {
     const { profile } = this.props
 
     const skillSet = profile.skills.map((skill, idx) => (
-      <div className="p-3" id={idx}>
+      <div className="p-3" id={idx} key={idx}>
         <i className="fa fa-check" />
         {skill}
       </div>
@@ -40,6 +41,10 @@ class ProfileAbout extends Component {
       </div>
     )
   }
+}
+
+ProfileAbout.propTypes = {
+  profile: PropTypes.object.isRequired
 }
 
 export default ProfileAbout
